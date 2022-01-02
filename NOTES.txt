@@ -5,7 +5,6 @@ What is the structure of the team?
 
 Questions:
   - Enter team name
-
   - Enter manager name
   - Enter manager employee ID
   - Enter manager email address
