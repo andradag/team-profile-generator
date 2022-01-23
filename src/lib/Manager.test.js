@@ -8,53 +8,43 @@ const instance = new Manager({
 });
 
 describe("Manager", () => {
-  let Manager;
+  test("should be an instance of Manager", () => {
+    const expected = "Manager";
 
-  beforeEach(() => {
-    Manager = new Manager();
+    const actual = instance.getRole();
+
+    expect(actual).toEqual(expected);
   });
 
-  describe("Manager", () => {
-    test("should be an instance of Manager", () => {
-      const expected = "Manager";
+  test("should return the expected name", () => {
+    const expected = "Jared";
 
-      const instance = new Manager("Manager");
+    const actual = instance.name;
 
-      const actual = instance.getRole();
+    expect(actual).toEqual(expected);
+  });
 
-      expect(actual).toEqual(expected);
-    });
+  test("should return the expected id", () => {
+    const expected = "1";
 
-    test("should return the expected name", () => {
-      const expected = "Jared";
+    const actual = instance.id;
 
-      const actual = instance.name;
+    expect(actual).toEqual(expected);
+  });
 
-      expect(actual).toEqual(expected);
-    });
+  test("should return the expected email", () => {
+    const expected = "jared@fakemail.com";
 
-    test("should return the expected id", () => {
-      const expected = "1";
+    const actual = instance.email;
 
-      const actual = instance.id;
+    expect(actual).toEqual(expected);
+  });
 
-      expect(actual).toEqual(expected);
-    });
+  test("should return the expected office number", () => {
+    const expected = "1";
 
-    test("should return the expected email", () => {
-      const expected = "jared@fakemail.com";
+    const actual = instance.getOfficeNumber();
 
-      const actual = instance.email;
-
-      expect(actual).toEqual(expected);
-    });
-
-    test("should return the expected office number", () => {
-      const expected = "1";
-
-      const actual = instance.getOfficeNumber;
-
-      expect(actual).toEqual(expected);
-    });
+    expect(actual).toEqual(expected);
   });
 });
