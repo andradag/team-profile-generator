@@ -11,32 +11,13 @@ module.exports = {
 };
 
 const inquirer = require("inquirer");
-// const questions = [
-//   {
-//     type: "input",
-//     message: "Enter team name",
-//     name: "team name",
-//   },
-// ];
-
-// inquirer
-//   .prompt(questions)
-//   .then((answer) => {
-//     console.log(answers);
-//   })
-//   .catch((error) => {
-//     console.log(error);
-//   });
+const fs = require("fs");
+const path = require("path");
 
 const teamAndManager = async () => {
   try {
     //declare the question
     const questions = [
-      {
-        type: "input",
-        message: "Enter team name",
-        name: "teamName",
-      },
       {
         type: "input",
         message: "Enter team manager's name",
@@ -57,13 +38,13 @@ const teamAndManager = async () => {
       {
         type: "input",
         message: "Enter team manager's office number",
-        name: "team manager's office number",
+        name: "officeNumber",
       },
     ];
 
     //prompt the questions to get answers
     const answers = await inquirer.prompt(questions);
-
+    console.log(answers.teamManagerName);
     // return the answers
     return answers;
   } catch (error) {
@@ -79,11 +60,11 @@ const teamBuild = async () => {
       {
         type: "list",
         message: "What would you like to do?",
-        name: [choices],
+        name: "task",
         choices: [
-          "Add an engineer",
-          "Add an intern",
-          "Finish building the team",
+          { name: "Add an engineer", value: "addEngineer" },
+          { name: "Add an intern", value: "addIntern" },
+          { name: "Finish building the team", value: "quit" },
         ],
       },
     ];
@@ -121,8 +102,8 @@ const addingEngineer = async () => {
       },
       {
         type: "input",
-        message: "Add the engineer's office number ",
-        name: "engineerOfficeNumber",
+        message: "Add the engineer's GitHub link ",
+        name: "engineerGitHubLink",
       },
     ];
 
@@ -177,8 +158,8 @@ const addingIntern = async () => {
   }
 };
 
-const constructHtmlFile = (answers) => {
-  return `# <!DOCTYPE html>
+const constructHtmlFile = (answers, teamName) => {
+  return ` <!DOCTYPE html>
   <html lang="en">
     <head>
       <title>Team Profile Generator</title>
@@ -199,126 +180,135 @@ const constructHtmlFile = (answers) => {
   
     <body>
       <header class="main-header">
-        <h1> ${answers.teamAndManager.teamname}
+        <h1> ${teamName}
         </h1>
       </header>
   
       <main class="cards">
         
   
-     ${constructManagerHtml(answers.teamAndManager)}
+     ${constructManagerHtml(answers.manager)}
+  
+       ${answers.engineers.map(constructEngineerHtml)}
 
-
-  
-        <section class="card">
-          <header>
-            Grace
-            <div>
-              <h7>Engineer</h7>
-            </div>
-          </header>
-          <div class="card" style="width: 18rem">
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">ID:3</li>
-              <li class="list-group-item">Email: grace@fakemail.com</li>
-              <li class="list-group-item">GitHub: gchoi2u</li>
-            </ul>
-          </div>
-        </section>
-  
-        <section class="card">
-          <header>
-            Tammer
-            <div>
-              <h7>Engineer</h7>
-            </div>
-          </header>
-          <div class="card" style="width: 18rem">
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">ID:4</li>
-              <li class="list-group-item">Email: tammer@fakemail.com</li>
-              <li class="list-group-item">GitHub: tammerg</li>
-            </ul>
-          </div>
-        </section>
-  
-       
+       ${answers.interns.map(constructInternHtml)}
       </main>
     </body>
   </html>
    `;
 };
 
-const constructManagerHtml = (answers) => {
-  return `# <section class="card">
+const constructManagerHtml = (manager) => {
+  return ` <section class="card">
 <header>
-  Jared
+  ${manager.teamManagerName}
   <div>
     <h7>Manager</h7>
   </div>
 </header>
 <div class="card" style="width: 18rem">
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">ID:1</li>
-    <li class="list-group-item">Email: jared@fakemail.com</li>
-    <li class="list-group-item">Office number: 1</li>
+    <li class="list-group-item">ID: ${manager.teamManagerEmployeeId}</li>
+    <li class="list-group-item">Email: ${manager.teamManagerEmailAddress}</li>
+    <li class="list-group-item">Office number: ${manager.officeNumber}</li>
   </ul>
 </div>
 </section>`;
 };
 
-const constructEngineerHtml = (answers) => {
-  return `#  <section class="card">
+const constructEngineerHtml = (engineer) => {
+  return ` <section class="card">
 <header>
-  Alec
+  ${engineer.engineerName}
   <div>
     <h7>Engineer</h7>
   </div>
 </header>
 <div class="card" style="width: 18rem">
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">ID:2</li>
-    <li class="list-group-item">Email: alex@fakemail.com</li>
-    <li class="list-group-item">GitHub: ibealec</li>
+    <li class="list-group-item">ID:${engineer.engineerID}</li>
+    <li class="list-group-item">Email: ${engineer.engineerEmailAddress}</li>
+    <li class="list-group-item">GitHub: ${engineer.engineerGitHubLink}</li>
   </ul>
 </div>
 </section>`;
 };
 
-const constructInternHtml = (answers) => {
-  return `# <section class="card">
+//${constructEngineerHtml(answers.Engineer)}
+
+const constructInternHtml = (intern) => {
+  return ` <section class="card">
 <header>
-  John
+  ${intern.internName}
   <div>
     <h7>Intern</h7>
   </div>
 </header>
 <div class="card" style="width: 18rem">
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">ID:5</li>
-    <li class="list-group-item">Email: john@fakemail.com</li>
-    <li class="list-group-item">School: 2University</li>
+    <li class="list-group-item">ID:${intern.internID}</li>
+    <li class="list-group-item">Email: ${intern.internEmailAddress}</li>
+    <li class="list-group-item">School: ${intern.internSchool}</li>
   </ul>
 </div>
 </section>`;
 };
 
 const start = async () => {
+  const { teamName } = await inquirer.prompt([
+    {
+      type: "input",
+      message: "Enter team name",
+      name: "teamName",
+    },
+  ]);
   //get answers
-  const answers = await teamAndManager();
-  const team = await teamBuild();
-  const engineer = await addingEngineer();
-  const intern = await addingIntern();
+  const manager = await teamAndManager();
+  console.log(manager);
+  console.log(teamName);
+  let continueTask = true;
+  const engineers = [];
+  const interns = [];
 
-  const readme = constructHtmlFile(answers);
+  while (continueTask) {
+    const { task } = await teamBuild();
+    if (task === "addIntern") {
+      console.log("add intern");
+      // call add intern here
 
-  //write to file
-  console.log(answers);
-  console.log(team);
-  console.log(engineer);
-  console.log(intern);
+      const intern = await addingIntern();
+      interns.push(intern);
+      console.log(intern);
+    }
 
-  writeToFile("GENERATED_HTML.html", htmlfile);
+    if (task === "addEngineer") {
+      console.log("add engineer");
+      // call add engineer here
+      // return;
+      const engineer = await addingEngineer();
+      engineers.push(engineer);
+      console.log(engineer);
+    }
+
+    if (task == "quit") {
+      continueTask = false;
+
+      var answers = {
+        manager: manager,
+        engineers: engineers,
+        interns: interns,
+      };
+
+      let htmlData = constructHtmlFile(answers, teamName);
+
+      // write html file
+      writeToFile("teamList.html", htmlData);
+    }
+  }
+
+  function writeToFile(fileName, data) {
+    return fs.writeFileSync(path.join(process.cwd(), fileName), data);
+  }
 
   console.log("Successfully generated HTML file");
 };
