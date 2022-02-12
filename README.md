@@ -54,7 +54,7 @@ node index.js
 
 ## The URL of the GitHub repository
 
-[Click Here](https://andradag.github.io/team-profile-generator/)
+[Click Here](https://github.com/andradag/team-profile-generator)
 
 ## Screenshot
 
